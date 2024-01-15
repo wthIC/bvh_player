@@ -157,10 +157,34 @@
 			//importBody();
 
 			window.addEventListener( 'resize', resize, false );
+
 			container.addEventListener( 'mousemove', onMouseMove, false );
+			container.addEventListener('touchmove', function (e) {
+				// stop touch event
+				e.stopPropagation();
+				e.preventDefault();
+			
+				// translate to mouse event
+				var clkEvt = document.createEvent('MouseEvent');
+				clkEvt.initMouseEvent('mousemove', true, true, window, e.detail, 
+							 e.touches[0].screenX, e.touches[0].screenY, 
+							 e.touches[0].clientX, e.touches[0].clientY, 
+							 false, false, false, false, 
+							 0, null);
+				mydiv.dispatchEvent(clkEvt);
+			
+				// or just handle touch event
+				onMouseMove(e);
+			}, false);
+
 		    container.addEventListener( 'mousedown', onMouseDown, false );
+		    container.addEventListener( 'touchstart', onMouseDown, false );
+
 		    container.addEventListener( 'mouseout', onMouseUp, false );
+		    container.addEventListener( 'touchleave', onMouseUp, false );
+
 		    container.addEventListener( 'mouseup', onMouseUp, false );
+		    container.addEventListener( 'touchend', onMouseUp, false );
 
 		    var body = document.body;
 		    if( body.addEventListener ){
@@ -307,37 +331,10 @@
 
 			var f5 = gui.addFolder('BVH Animation BETA');
 
-			BVHanimConfig.calibration = function() { loadBVH("calibration.png"); };
-            BVHanimConfig.ballet = function() { loadBVH("ballet.png"); };
-            BVHanimConfig.shoot = function() { loadBVH("shoot.png"); };
-            BVHanimConfig.sprint = function() { loadBVH("sprint.png"); };
-            BVHanimConfig.exsize = function() { loadBVH("exsize.png"); };
-            BVHanimConfig.test = function() { loadBVH("test.png"); };
-            BVHanimConfig.big = function() { loadBVH("big.png"); };
-
-            BVHanimConfig.c11A = function() { loadBVH("c11A.png"); };
-            BVHanimConfig.c11B = function() { loadBVH("c11B.png"); };
-
-            BVHanimConfig.dance = function() { loadBVH("dance.png"); };
-
             BVHanimConfig.stop = function() {  bvhReader.play = false; };
             BVHanimConfig.play = function() { bvhReader.oldFrame = bvhReader.frame; bvhReader.startTime = Date.now(); bvhReader.play = true; };
             BVHanimConfig.next = function() { bvhReader.next(); };
             BVHanimConfig.prev = function() { bvhReader.prev(); };
-
-
-            f5.add( BVHanimConfig, 'calibration' );
-            f5.add( BVHanimConfig, 'ballet' );
-            f5.add( BVHanimConfig, 'shoot' );
-            f5.add( BVHanimConfig, 'sprint' );
-            f5.add( BVHanimConfig, 'exsize' );
-            f5.add( BVHanimConfig, 'test' );
-            f5.add( BVHanimConfig, 'big' );
-
-            f5.add( BVHanimConfig, 'c11A' );
-            f5.add( BVHanimConfig, 'c11B' );
-
-             f5.add( BVHanimConfig, 'dance' );
 
             f5.add( BVHanimConfig, 'speed', 0.1, 1 ).onChange( function() { bvhReader.speed = BVHanimConfig.speed; });;
 
