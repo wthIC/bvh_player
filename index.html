@@ -158,33 +158,13 @@
 
 			window.addEventListener( 'resize', resize, false );
 
-			container.addEventListener( 'mousemove', onMouseMove, false );
-			container.addEventListener('touchmove', function (e) {
-				// stop touch event
-				e.stopPropagation();
-				e.preventDefault();
-			
-				// translate to mouse event
-				var clkEvt = document.createEvent('MouseEvent');
-				clkEvt.initMouseEvent('mousemove', true, true, window, e.detail, 
-							 e.touches[0].screenX, e.touches[0].screenY, 
-							 e.touches[0].clientX, e.touches[0].clientY, 
-							 false, false, false, false, 
-							 0, null);
-				mydiv.dispatchEvent(clkEvt);
-			
-				// or just handle touch event
-				onMouseMove(e);
-			}, false);
+			container.addEventListener( 'pointermove', onMouseMove, false );
 
-		    container.addEventListener( 'mousedown', onMouseDown, false );
-		    container.addEventListener( 'touchstart', onMouseDown, false );
+		    container.addEventListener( 'pointerdown', onMouseDown, false );
 
-		    container.addEventListener( 'mouseout', onMouseUp, false );
-		    container.addEventListener( 'touchleave', onMouseUp, false );
+		    container.addEventListener( 'pointerout', onMouseUp, false );
 
-		    container.addEventListener( 'mouseup', onMouseUp, false );
-		    container.addEventListener( 'touchend', onMouseUp, false );
+		    container.addEventListener( 'pointerup', onMouseUp, false );
 
 		    var body = document.body;
 		    if( body.addEventListener ){
