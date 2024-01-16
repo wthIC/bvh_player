@@ -166,13 +166,24 @@
 
 		    container.addEventListener( 'pointerup', onMouseUp, false );
 
-		    var body = document.body;
-		    if( body.addEventListener ){
-		        body.addEventListener( 'mousewheel', onMouseWheel, false ); //chrome
-		        body.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
-		    }else if( body.attachEvent ){
-		        body.attachEvent("onmousewheel" , onMouseWheel); // ie
-		    }
+			container.addEventListener('wheel', function(e) {
+				//e.preventDefault();
+				var delta = 0;
+		    	if(e.wheelDelta){delta=e.wheelDelta*-1;}
+		    	else if(e.detail){delta=e.detail*20;}
+		    	camPos.distance+=(delta/10);
+
+		    	moveCamera();   
+		    	e.preventDefault();
+			}, false);
+
+		    //var body = document.body;
+		    //if( body.addEventListener ){
+		    //    body.addEventListener( 'mousewheel', onMouseWheel, false ); //chrome
+		    //    body.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+		    //}else if( body.attachEvent ){
+		    //    body.attachEvent("onmousewheel" , onMouseWheel); // ie
+		    //}
 		    animate();
 
 		    initBVH();
