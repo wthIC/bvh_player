@@ -160,13 +160,13 @@
 
 			window.addEventListener( 'resize', resize, false );
 
-			container.addEventListener( 'pointermove', onMouseMove, false );
+			//container.addEventListener( 'pointermove', onMouseMove, false );
 
-		    container.addEventListener( 'pointerdown', onMouseDown, false );
+		    //container.addEventListener( 'pointerdown', onMouseDown, false );
 
-		    container.addEventListener( 'pointerout', onMouseUp, false );
+		    //container.addEventListener( 'pointerout', onMouseUp, false );
 
-		    container.addEventListener( 'pointerup', onMouseUp, false );
+		    //container.addEventListener( 'pointerup', onMouseUp, false );
 
 			container.addEventListener('touchstart', handleTouchStart);
 			
@@ -178,6 +178,7 @@
 		}
 
 		let initialDistance = 0;
+		let initialAngle = 0;
 		let currentScale = 1;
 
 		function handleTouchStart(event) {
@@ -185,6 +186,7 @@
 		
 			if (touches.length === 2) {
 				initialDistance = getDistance(touches[0], touches[1]);
+				initialAngle = getAngle(touches[0], touches[1]);
 				event.preventDefault();
 			}
 		} 
@@ -194,18 +196,30 @@
 		
 			if (touches.length === 2) {
 				const currentDistance = getDistance(touches[0], touches[1]);
-				const delta = currentDistance - initialDistance;
-		
+				const currentAngle = getAngle(touches[0], touches[1]);
+
+				const deltaDistance = currentDistance - initialDistance;
+				const deltaAngle = currentAngle - initialAngle;
+
 				const scaleFactor = 0.01; // Adjust this value based on your desired sensitivity
-				const scaleDelta = delta * scaleFactor;
-		
-				currentScale = Math.max(0.5, currentScale + scaleDelta); // Ensure minimum scale is 0.5
+				const scaleDelta = deltaDistance * scaleFactor;
+
+				currentScale = Math.max(0.5, currentScale + scaleDelta);
 		
 				camPos.distance+=(delta/50);
 
 		    	moveCamera();   
+				initialDistance = currentDistance;
+        		initialAngle = currentAngle;
 				event.preventDefault();
 			}
+		}
+
+		function getAngle(touch1, touch2) {
+			const dx = touch2.clientX - touch1.clientX;
+			const dy = touch2.clientY - touch1.clientY;
+		
+			return Math.atan2(dy, dx);
 		}
 
 		function getDistance(touch1, touch2) {
