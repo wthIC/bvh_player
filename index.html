@@ -21,6 +21,12 @@
 	<link href="css/dianna.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" type="text/css" href="history/history.css" />
 
+	<style>
+
+		
+
+    </style>
+
 </head>
 
 	<script src="js/three.min.66.js"></script>
@@ -84,6 +90,11 @@
 		var SeaStandard = false;
 		var BonesRevers = true;
 
+		var frameRate = 120;
+		var isPlaying = false;
+		var totalFrames;
+		var durationInSeconds;
+
 		function init() {
 
 			out1 = document.getElementById("output1");
@@ -112,17 +123,63 @@
 
 		function handleFileSelect(evt) {
 		 	var f = evt.target.files[0];
+			document.getElementById('file-status-text').textContent = "Selected File: " + f.name;
 		 	var reader = new FileReader();
 		 	reader.onload = (function(theFile) {
 		 		return function(e) {
 		 			bvhReader.parseData(e.target.result.split(/\s+/g));
+					document.getElementById('play-pause-btn').textContent = '||';
+					isPlaying = true;
+					totalFrames = bvhReader.numFrames;
+					durationInSeconds = totalFrames / frameRate;
+					document.getElementById('end-time').textContent = formatTime(durationInSeconds);
+					console.log(totalFrames);
+					console.log(durationInSeconds);
+					document.getElementById('play-pause-btn').addEventListener('click', function() {
+						if (!isPlaying) {
+							play();
+						} else {
+							pause();
+						}
+					});
+					setInterval(function() {
+						if (bvhReader.play) {
+							updateProgressBar();
+						}
+					}, 1000 / frameRate);
 		 		};
 		 	})(f);
 		 	reader.readAsText(f);
 		}
 
+		function updateProgressBar() {
+			var progressBar = document.getElementById('progress-bar');
+			var currentTime = document.getElementById('current-time');
+			var percentage = (bvhReader.frame / totalFrames) * 100;
+			progressBar.style.width = percentage + '%';
+			currentTime.textContent = formatTime(bvhReader.frame / frameRate);
+		}
+
+		function play() {
+			isPlaying = true;
+			document.getElementById('play-pause-btn').textContent = '||'; // Pause symbol
+			bvhReader.play = true; // Start playing BVH data
+		}
+
+		function pause() {
+			isPlaying = false;
+			document.getElementById('play-pause-btn').textContent = '►'; // Play symbol
+			bvhReader.play = false; // Pause BVH data playback
+		}
+
+		function formatTime(seconds) {
+			var minutes = Math.floor(seconds / 60);
+			var seconds = Math.floor(seconds % 60);
+			return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+		}
+
 		function debugTell(s) {
-			debug.innerHTML = s;
+			//debug.innerHTML = s;
 		}
 
 		function initScene3D() {
@@ -284,7 +341,7 @@
 		var BVHset = {ax:"x", ay:"y", az:"z", dx:1, dy:1, dz:1, rx:0, ry:0, rz:0, order:"XYZ"};
 		var BVHanimConfig = {
 			debug:true,
-			speed:0.25,
+			speed:1,
 			size:1,
 			px:0, py:0, pz:0,
 			boneSize:1.5
@@ -468,28 +525,62 @@
 		    e.preventDefault();
 		}
 
-		
+		function setProgress(event) {
+			console.log("Hello");
+			var progressContainer = document.getElementById('progress-container');
+			var newTime = (event.offsetX / progressContainer.offsetWidth) * durationInSeconds;
+			console.log(newTime);
+			var frameToSet = Math.round(newTime * frameRate);
+			bvhReader.frame = frameToSet;
+			bvhReader.oldFrame = frameToSet; // Set the current frame
+			bvhReader.startTime = Date.now();
+			bvhReader.animate();
+			updateProgressBar();
+		}
 
 		window.onload = init;
 
 	</script>
 
+	
+
 	<body>
 		<div id="viewport"></div>
+
+		<div id="file-select">
+			<div class="file-upload-wrapper">
+				<input type="file" id="files" class="file-upload-input">
+				<span id="file-upload-text" class="file-upload-text">Select file</span>
+			</div>
+
+			<div class="file-status-wrapper">
+				<span id="file-status-text" class="file-status-text">Selected file: None</span>
+			</div>
+
+		</div>
+
+		<div id="player-controls">
+			<button id="play-pause-btn" class="play">&#9658;</button>
+			<div id="progress-container" onclick="setProgress(event)">
+				<div id="progress-bar"></div>
+			</div>
+			<div id="time-display">
+				<span id="current-time">0:00</span>
+				<span id="end-time">3:56</span>
+			</div>
+		</div>
+
 		<div id="hubs">
 			<div id="debug"></div>
 			<div id="guiContener"><div id="gui"></div></div>
-			<div id="copy">
+			<!--<div id="copy">
 				BVH player <a href="http://3dflashlo.wordpress.com/" target="_blank">&nbsp;&nbsp;&nbsp;loth 2014&nbsp;&nbsp;&nbsp;</a>
-			</div>
-			<input type="file" id="files" />
+			</div>-->	
 		</div>
 		<div id="BVHhubs">
 
 		</div>
 		
-		<div id="output1"></div>
-		<div id="output2"></div>
 
 		
 
