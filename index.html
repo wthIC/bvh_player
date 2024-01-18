@@ -53,6 +53,8 @@
 		var ambient, hemiLight, pointLight, light;
 		var body, suit, bodyNeck, bodyHead, head, neck, hair, eyeR, eyeL, teethUp, teethDown, eyeTop, tongue, troat, headBase, fakeNeck, eyesTarget;
 	
+		var zoomSensitivity = 0.1;
+
 		var materials = []; 
 		var clock = new THREE.Clock();
 		var ground;
@@ -249,7 +251,7 @@
 		    }else if( body.attachEvent ){
 		        body.attachEvent("onmousewheel" , onMouseWheel); // ie
 		    }
-			
+
 		    animate();
 
 		    initBVH();
