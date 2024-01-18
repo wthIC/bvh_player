@@ -112,6 +112,14 @@
 
 			debug = document.getElementById("debug");
 
+			document.getElementById('play-pause-btn').addEventListener('click', function() {
+				if (!isPlaying) {
+					play();
+				} else {
+					pause();
+				}
+			});
+
 			document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 			addGUI();
@@ -135,13 +143,6 @@
 					document.getElementById('end-time').textContent = formatTime(durationInSeconds);
 					console.log(totalFrames);
 					console.log(durationInSeconds);
-					document.getElementById('play-pause-btn').addEventListener('click', function() {
-						if (!isPlaying) {
-							play();
-						} else {
-							pause();
-						}
-					});
 					setInterval(function() {
 						if (bvhReader.play) {
 							updateProgressBar();
@@ -556,6 +557,8 @@
 			<div class="file-status-wrapper">
 				<span id="file-status-text" class="file-status-text">Selected file: None</span>
 			</div>
+
+
 
 		</div>
 
