@@ -53,6 +53,8 @@
 		var ambient, hemiLight, pointLight, light;
 		var body, suit, bodyNeck, bodyHead, head, neck, hair, eyeR, eyeL, teethUp, teethDown, eyeTop, tongue, troat, headBase, fakeNeck, eyesTarget;
 	
+		var zoomSensitivity = 0.1;
+
 		var materials = []; 
 		var clock = new THREE.Clock();
 		var ground;
@@ -228,6 +230,23 @@
 		    container.addEventListener( 'pointerout', onMouseUp, false );
 
 		    container.addEventListener( 'pointerup', onMouseUp, false );
+
+			var body = document.body;
+		    if( body.addEventListener ){
+		        body.addEventListener( 'mousewheel', onMouseWheel, false ); //chrome
+		        body.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+		    }else if( body.attachEvent ){
+		        body.attachEvent("onmousewheel" , onMouseWheel); // ie
+		    }
+
+			var mc = new Hammer.Manager(container);
+			mc.add(new Hammer.Pinch());
+
+			mc.on("pinch", function(ev) {
+				// Adjust the distance of the camera based on the pinch scale
+				camPos.distance /= ev.scale * zoomSensitivity;
+				moveCamera();
+			});
 			
 		    animate();
 
