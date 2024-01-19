@@ -83,7 +83,7 @@
 		var debug;
 
 		var zoomSensitivity = 3;
-		var panSensitivity = 3;
+		var panSensitivity = 1;
 
 		var lastPinchScale = 1; 
 		var lastPanPosition = { x: 0, y: 0 }; 
@@ -250,14 +250,6 @@
 
 			window.addEventListener( 'resize', resize, false );
 
-			//container.addEventListener( 'pointermove', onMouseMove, false );
-
-		    //container.addEventListener( 'pointerdown', onMouseDown, false );
-
-		    //container.addEventListener( 'pointerout', onMouseUp, false );
-
-		    //container.addEventListener( 'pointerup', onMouseUp, false );
-
 			var mc = new Hammer.Manager(container);
 			mc.add(new Hammer.Pinch());
 			mc.add(new Hammer.Pan({ threshold: 0, pointers: 1 }));
@@ -268,13 +260,13 @@
 				}
 		
 				if (ev.type === 'pinchmove') {
-					//var scaleChange = ev.scale / lastPinchScale;
+					var scaleChange = ev.scale / lastPinchScale;
 					//camPos.distance *= scaleChange;
-					//lastPinchScale = ev.scale;
+					lastPinchScale = ev.scale;
 					if (ev.scale <= 1)
-						camPos.distance += ev.scale * zoomSensitivity;
+						camPos.distance += scaleChange * zoomSensitivity;
 					else 
-						camPos.distance -= ev.scale * zoomSensitivity;
+						camPos.distance -= scaleChange * zoomSensitivity;
 					moveCamera();
 				}
 			});
@@ -292,22 +284,13 @@
 				}
 			});
 
-			/* mc.on("pinch", function(ev) {
-				// Adjust the distance of the camera based on the pinch scale
-				if (ev.scale <= 1)
-					camPos.distance += ev.scale * zoomSensitivity;
-				else 
-					camPos.distance -= ev.scale * zoomSensitivity;
-				moveCamera();
-			}); */
-
-			/* var body = document.body;
+			var body = document.body;
 		    if( body.addEventListener ){
 		        body.addEventListener( 'mousewheel', onMouseWheel, false ); //chrome
 		        body.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
 		    }else if( body.attachEvent ){
 		        body.attachEvent("onmousewheel" , onMouseWheel); // ie
-		    } */
+		    } 
 
 		    animate();
 
