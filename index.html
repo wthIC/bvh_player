@@ -20,6 +20,8 @@
 	<link rel="shortcut icon" href="res/img/favicon.ico" type="image/x-icon" />
 	<link href="css/dianna.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" type="text/css" href="history/history.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
 	<style>
 
@@ -82,6 +84,7 @@
 
 		var zoomSensitivity = 3;
 
+		var empty = true;
 		var bvhReader = null;
 
 		var displayModel = true;
@@ -115,10 +118,17 @@
 			debug = document.getElementById("debug");
 
 			document.getElementById('play-pause-btn').addEventListener('click', function() {
-				if (!isPlaying) {
+				var icon = this.querySelector('i');
+				if (!isPlaying && !empty) {
 					play();
-				} else {
+					icon.classList.remove('fa-play');
+					icon.classList.add('fa-pause');
+					this.innerHTML = "<i class='fas fa-pause fa-fw'></i>";
+				} else if (!empty) {
 					pause();
+					icon.classList.remove('fa-pause');
+					icon.classList.add('fa-play');
+					this.innerHTML = "<i class='fas fa-play fa-fw'></i>";
 				}
 			});
 
@@ -133,12 +143,22 @@
 
 		function handleFileSelect(evt) {
 		 	var f = evt.target.files[0];
+			var extension = f.name.substr(f.name.lastIndexOf('.')+1,f.name.length);
+			if (extension != 'bvh') {
+				alert("Cannot import this file format");
+				return;
+			}
+			console.log(extension);
 			document.getElementById('file-status-text').textContent = "Selected File: " + f.name;
 		 	var reader = new FileReader();
 		 	reader.onload = (function(theFile) {
 		 		return function(e) {
 		 			bvhReader.parseData(e.target.result.split(/\s+/g));
-					document.getElementById('play-pause-btn').textContent = '||';
+					var btn = document.getElementById('play-pause-btn');
+					var icon = btn.querySelector('i');
+					icon.classList.remove('fa-play');
+					icon.classList.add('fa-pause');
+					this.innerHTML = "<i class='fas fa-pause fa-fw'></i>";
 					isPlaying = true;
 					totalFrames = bvhReader.numFrames;
 					durationInSeconds = totalFrames / frameRate;
@@ -150,6 +170,7 @@
 							updateProgressBar();
 						}
 					}, 1000 / frameRate);
+					empty = false;
 		 		};
 		 	})(f);
 		 	reader.readAsText(f);
@@ -587,13 +608,13 @@
 		</div>
 
 		<div id="player-controls">
-			<button id="play-pause-btn" class="play">&#9658;</button>
+			<button id="play-pause-btn" class="play"><i class= "fas fa-play fa-fw"></i></button>
 			<div id="progress-container" onclick="setProgress(event)">
 				<div id="progress-bar"></div>
 			</div>
 			<div id="time-display">
-				<span id="current-time">0:00</span>
-				<span id="end-time">3:56</span>
+				<span id="current-time">-:--</span>
+				<span id="end-time">-:--</span>
 			</div>
 		</div>
 

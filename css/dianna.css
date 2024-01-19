@@ -6,7 +6,12 @@
   user-select: none; 
 }
 
+#play-pause-btn .fas {
+  font-size: 20px; /* Adjust the size as needed */
+}
+
 .file-upload-wrapper {
+  scale: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
