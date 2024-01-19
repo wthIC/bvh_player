@@ -42,7 +42,6 @@
 
 	<script>
 		var vsize = { x:100, y:100, z:0 };
-		var mouse = { x:0, y:0 };
 		var lightPos, camPos;
 
 		var inRender = true, inResize = false, isNeedPause = false;
@@ -59,7 +58,6 @@
 		var clock = new THREE.Clock();
 		var ground;
 
-		var gui;
 		var animConfig = {
 			current:"none",
 			//neckmove:false, 
@@ -115,7 +113,6 @@
 
 			camPos = { horizontal: 90, vertical: 80, distance: 200, automove: false };
 			lightPos = { horizontal: 135, vertical: 35, distance: 200 };
-            mouse = { ox:0, oy:0, h:0, v:0, mx:0, my:0, down:false, over:false, moving:true, dx:0, dy:0 };
 
             if(SeaStandard)lightPos.horizontal+=180;
 
@@ -137,8 +134,6 @@
 			});
 
 			document.getElementById('files').addEventListener('change', handleFileSelect, false);
-
-			addGUI();
 
 			initScene3D();
 
@@ -417,48 +412,18 @@
 
 			loadBVH("action.png");
 
-			initBVHGui();
-
 		}
 
 		function loadBVH(name) {
 			 bvhReader.load("res/bvh/"+name);
 		}
 
-		function initBVHGui() {
-			
-
-			var f5 = gui.addFolder('BVH Animation BETA');
-
-            BVHanimConfig.stop = function() {  bvhReader.play = false; };
-            BVHanimConfig.play = function() { bvhReader.oldFrame = bvhReader.frame; bvhReader.startTime = Date.now(); bvhReader.play = true; };
-            BVHanimConfig.next = function() { bvhReader.next(); };
-            BVHanimConfig.prev = function() { bvhReader.prev(); };
-
-            f5.add( BVHanimConfig, 'speed', 0.1, 1 ).onChange( function() { bvhReader.speed = BVHanimConfig.speed; });;
-
-            f5.add( BVHanimConfig, 'stop' );
-            f5.add( BVHanimConfig, 'play' )
-            f5.add( BVHanimConfig, 'next' );
-            f5.add( BVHanimConfig, 'prev' );
-
-            f5.add( BVHanimConfig, 'size', 1, 5 ).onChange( function() { bvhReader.reScale(BVHanimConfig.size) });
-            f5.add( BVHanimConfig, 'px', -100, 100 ).onChange( function() { positionBVH() });;
-            f5.add( BVHanimConfig, 'py', -100, 100 ).onChange( function() { positionBVH() });;
-            f5.add( BVHanimConfig, 'pz', -100, 100 ).onChange( function() { positionBVH() });;
-
-            f5.add( BVHanimConfig, 'boneSize', 0.5, 5 ).onChange( function() { bvhReader.boneSize = BVHanimConfig.boneSize; });
-
-			f5.open();
-
-		}
 		function positionBVH() {
 			bvhReader.rePosition(new THREE.Vector3( BVHanimConfig.px || 0, BVHanimConfig.py|| 0, BVHanimConfig.pz|| 0 ))
 		}
 
 		function updateBVH() {
 			if(bvhReader !== null && bvhReader.play){
-
 				bvhReader.update();
 			}
 		}
@@ -487,10 +452,6 @@
 				var e = o.matrix.elements
 				var s = o.name+"<br>";
 				var q = o.quaternion.clone();
-				//s+=( q.x ).toFixed(2)+ "_"+ ( q.y ).toFixed(2) +  "_"+ (q.z).toFixed(2)+ "_"+  (q.w).toFixed(2);
-				//s+=( b.rot.x * ToDeg ).toFixed(2)+ "_"+ ( b.rot.y * ToDeg ).toFixed(2) +  "_"+ ( b.rot.z * ToDeg ).toFixed(2);
-
-				//s+= "<br>"
 
 				s+=( o.rotation.x * ToDeg ).toFixed(2)+ "_"+ ( o.rotation.y * ToDeg ).toFixed(2) +  "_"+ ( o.rotation.z * ToDeg ).toFixed(2)+ "_"+ o.rotation.order;
 
@@ -504,23 +465,11 @@
 				if(n===1) out1.innerHTML = s;
 				else out2.innerHTML = s;
 			}
-
-
-
-		//-----------------------------------------------------
-		//  GUI
-		//-----------------------------------------------------
-
-		function addGUI() {
-			gui = new dat.GUI({autoPlace:false, width:204});
-			document.getElementById('gui').appendChild(gui.domElement);
-		}
 		
 		function tell(s){
 			document.getElementById("debug").innerHTML = s;
 		}
 
-		
 
 		//-----------------------------------
 		// MATH
@@ -548,35 +497,6 @@
 		function moveCamera() {
 		    camera.position.copy(Orbit(center, camPos.horizontal, camPos.vertical, camPos.distance));
 		    camera.lookAt(center);
-		}
-
-		function onMouseDown(e) {
-		    e.preventDefault();
-		    mouse.ox = e.clientX;
-		    mouse.oy = e.clientY;
-		    mouse.h = camPos.horizontal;
-		    mouse.v = camPos.vertical;
-		    mouse.down = true;
-		}
-
-		function onMouseUp(e) {
-		    mouse.down = false;
-		    document.body.style.cursor = 'auto';
-		}
-
-		function onMouseMove(e) {
-		    e.preventDefault();
-		    if (mouse.down ) {
-		        document.body.style.cursor = 'move';
-		        if(SeaStandard)camPos.horizontal = (-(e.clientX - mouse.ox) * 0.3) + mouse.h;
-		        else camPos.horizontal = ((e.clientX - mouse.ox) * 0.3) + mouse.h;
-		        camPos.vertical = (-(e.clientY - mouse.oy) * 0.3) + mouse.v;
-
-		        moveCamera();
-		    } else {
-		    	mouse.ox = e.clientX;
-			    mouse.oy = e.clientY;
-		    }
 		}
 
 		function onMouseWheel(e) {
@@ -638,13 +558,9 @@
 
 		<div id="hubs">
 			<div id="debug"></div>
-			<div id="guiContener"><div id="gui"></div></div>
 			<!--<div id="copy">
 				BVH player <a href="http://3dflashlo.wordpress.com/" target="_blank">&nbsp;&nbsp;&nbsp;loth 2014&nbsp;&nbsp;&nbsp;</a>
 			</div>-->	
-		</div>
-		<div id="BVHhubs">
-
 		</div>
 		
 
