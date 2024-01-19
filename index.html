@@ -225,13 +225,13 @@
 
 			window.addEventListener( 'resize', resize, false );
 
-			//container.addEventListener( 'pointermove', onMouseMove, false );
+			container.addEventListener( 'pointermove', onMouseMove, false );
 
-		    //container.addEventListener( 'pointerdown', onMouseDown, false );
+		    container.addEventListener( 'pointerdown', onMouseDown, false );
 
-		    //container.addEventListener( 'pointerout', onMouseUp, false );
+		    container.addEventListener( 'pointerout', onMouseUp, false );
 
-		    //container.addEventListener( 'pointerup', onMouseUp, false );
+		    container.addEventListener( 'pointerup', onMouseUp, false );
 
 			var mc = new Hammer.Manager(container);
 			mc.add(new Hammer.Pinch());
