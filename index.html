@@ -80,7 +80,7 @@
 
 		var debug;
 
-		var zoomSensitivity = 1;
+		var zoomSensitivity = 3;
 
 		var bvhReader = null;
 
@@ -238,7 +238,7 @@
 
 			mc.on("pinch", function(ev) {
 				// Adjust the distance of the camera based on the pinch scale
-				if (ev.scale >= 1)
+				if (ev.scale <= 1)
 					camPos.distance += ev.scale * zoomSensitivity;
 				else 
 					camPos.distance -= ev.scale * zoomSensitivity;
