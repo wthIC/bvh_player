@@ -52,8 +52,6 @@
 		var camera, container, scene, renderer, composer, renderPass, delta, center, centerLight;
 		var ambient, hemiLight, pointLight, light;
 		var body, suit, bodyNeck, bodyHead, head, neck, hair, eyeR, eyeL, teethUp, teethDown, eyeTop, tongue, troat, headBase, fakeNeck, eyesTarget;
-	
-		var zoomSensitivity = 1;
 
 		var materials = []; 
 		var clock = new THREE.Clock();
@@ -82,7 +80,7 @@
 
 		var debug;
 
-		var zoomSensitivity = 0.1;
+		var zoomSensitivity = 1;
 
 		var bvhReader = null;
 
@@ -240,7 +238,10 @@
 
 			mc.on("pinch", function(ev) {
 				// Adjust the distance of the camera based on the pinch scale
-				camPos.distance += ev.scale * zoomSensitivity;
+				if (ev.scale >= 1)
+					camPos.distance += ev.scale * zoomSensitivity;
+				else 
+					camPos.distance -= ev.scale * zoomSensitivity;
 				moveCamera();
 			});
 
