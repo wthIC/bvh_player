@@ -273,8 +273,8 @@
 				}
 		
 				if (ev.type === 'panmove') {
-					camPos.horizontal = lastPanPosition.x - (ev.deltaX * panSensitivity);
-					camPos.vertical = lastPanPosition.y + (ev.deltaY * panSensitivity);
+					camPos.horizontal = lastPanPosition.x + (ev.deltaX * panSensitivity);
+					camPos.vertical = lastPanPosition.y - (ev.deltaY * panSensitivity);
 					moveCamera();
 				}
 			});
